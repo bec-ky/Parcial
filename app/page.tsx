@@ -12,7 +12,7 @@ export default function Home() {
     if (status === "authenticated") {
       return (
         <div className="flex flex-col items-center gap-4">
-          <img src={session?.user?.image } /> 
+          <img src={session?.user?.image ?? undefined} /> 
           
           <button
             className="border border-solid border-black rounded"
