@@ -28,7 +28,7 @@ export default function Home() {
     if (status === 'authenticated' && session?.user?.email) {
       fetch(`/api/coordenadas?creador=${session.user.email}`)
         .then((response) => response.json())
-        .then((data) => setCoordenadas(data))
+        .then((data) => setCoordenadas(Array.isArray(data) ? data : []))
         .catch((error) => setError('Error al cargar las coordenadas'));
     }
   }, [status, session?.user?.email]);
@@ -37,35 +37,24 @@ export default function Home() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const geocodeUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(nombre)}&format=json&limit=1`;
-      const geocodeResponse = await fetch(geocodeUrl);
-      const geocodeData = await geocodeResponse.json();
+      const response = await fetch('/api/coordenadas', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nombre,
+          creador: session.user.email,
+        }),
+      });
 
-      if (geocodeData && geocodeData.length > 0) {
-        const { lat, lon } = geocodeData[0];
-        const response = await fetch('/api/coordenadas', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            nombre,
-            lat: parseFloat(lat),
-            lon: parseFloat(lon),
-            creador: session.user.email,
-          }),
-        });
-
-        if (response.ok) {
-          const newCoordenada = await response.json();
-          setCoordenadas((prev) => [...prev, newCoordenada]);
-          setNombre('');
-        } else {
-          const errorData = await response.json();
-          setError(errorData.error || 'Error al agregar la coordenada');
-        }
+      if (response.ok) {
+        const newCoordenada = await response.json();
+        setCoordenadas((prev) => [...prev, newCoordenada]);
+        setNombre('');
       } else {
-        setError('No se encontraron coordenadas para la ubicación proporcionada');
+        const errorData = await response.json();
+        setError(errorData.error || 'Error al agregar la coordenada');
       }
     } catch (error) {
       setError('Error al agregar la coordenada');
@@ -133,7 +122,7 @@ export default function Home() {
       </div>
 
       <div className="w-full h-64 mb-8">
-        <Map location={{ lat: coordenadas[0]?.lat || 0, lon: coordenadas[0]?.lon || 0 }} eventos={coordenadas} />
+        <Map location={{ lat: coordenadas[0]?.lat || 0, lon: coordenadas[0]?.lon || 0 }} coordenadas={coordenadas} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-7xl">
