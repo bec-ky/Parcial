@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { use } from 'react';
+import dynamic from "next/dynamic";
+
+const Map = dynamic(() => import("@/components/Map"), { ssr: false });
 
 interface Evento {
   _id: string;
@@ -99,14 +102,26 @@ export default function EventoDetalle({ params }: { params: Promise<{ id: string
           <p><strong>Organizador:</strong> {evento.organizador}</p>
         </div>
 
+        <div className="mb-8">
+          <Map location={{ lat: evento.lat, lon: evento.lon }} eventos={[evento]} />
+        </div>
+
         {session?.user?.email === evento.organizador && (
-          <button
-            onClick={handleDelete}
-            disabled={isDeleting}
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 disabled:bg-red-300"
-          >
-            {isDeleting ? 'Borrando...' : 'Borrar evento'}
-          </button>
+           <>
+           <button
+             onClick={handleDelete}
+             disabled={isDeleting}
+             className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 disabled:bg-red-300"
+           >
+             {isDeleting ? 'Borrando...' : 'Borrar evento'}
+           </button>
+              <Link href={`/eventos/${evento._id}/editar`}>
+              <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ml-2">
+                Editar evento
+              </button>
+            </Link>
+            </>
+ 
         )}
       </div>
     </main>
