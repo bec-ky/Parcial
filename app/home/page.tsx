@@ -37,6 +37,10 @@ export default function Home() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
+      if (!session?.user?.email) {
+        throw new Error('No se ha encontrado el email del usuario');
+      }
+
       const response = await fetch('/api/coordenadas', {
         method: 'POST',
         headers: {
