@@ -9,14 +9,17 @@ const CrearEvento = () => {
   const [timestamp, setTimestamp] = useState('');
   const [lugar, setLugar] = useState('');
   const [imagen, setImagen] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       const session = await getSession();
       if (!session) {
         console.error('No hay sesión activa');
+        setIsSubmitting(false);
         return;
       }
 
@@ -28,6 +31,7 @@ const CrearEvento = () => {
         formData.append('organizador', session.user.email);
       } else {
         console.error('El usuario no tiene un email válido');
+        setIsSubmitting(false);
         return;
       }
       if (imagen) {
@@ -46,6 +50,8 @@ const CrearEvento = () => {
       }
     } catch (error) {
       console.error('Error al crear el evento', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -67,7 +73,7 @@ const CrearEvento = () => {
         <label>Imagen:</label>
         <input type="file" onChange={(e) => setImagen(e.target.files?.[0] || null)} required />
       </div>
-      <button type="submit">Crear Evento</button>
+      <button type="submit" disabled={isSubmitting}>Crear Evento</button>
     </form>
   );
 };
