@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import Evento from "@/models/Evento";
+import Coordenada from "@/models/Coordenada";
 import { connectDB } from "@/lib/mongodb";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -12,16 +12,16 @@ export async function GET(
   try {
     const { id } = await params;
     await connectDB();
-    const evento = await Evento.findById(id);
+    const coordenada = await Coordenada.findById(id);
 
-    if (!evento) {
-      return NextResponse.json({ error: "Evento no encontrado" }, { status: 404 });
+    if (!coordenada) {
+      return NextResponse.json({ error: "Coordenada no encontrada" }, { status: 404 });
     }
 
-    return NextResponse.json(evento);
+    return NextResponse.json(coordenada);
   } catch (error) {
-    console.error("Error al obtener el evento:", error);
-    return NextResponse.json({ error: "Error al obtener el evento" }, { status: 500 });
+    console.error("Error al obtener la coordenada:", error);
+    return NextResponse.json({ error: "Error al obtener la coordenada" }, { status: 500 });
   }
 }
 
@@ -38,13 +38,13 @@ export async function PUT(
     const { id } = await params;
     await connectDB();
 
-    const evento = await Evento.findById(id);
-    if (!evento) {
-      return NextResponse.json({ error: "Evento no encontrado" }, { status: 404 });
+    const coordenada = await Coordenada.findById(id);
+    if (!coordenada) {
+      return NextResponse.json({ error: "Coordenada no encontrada" }, { status: 404 });
     }
 
-    // Verificar que el usuario es el organizador
-    if (evento.organizador !== session.user.email) {
+    // Verificar que el usuario es el creador
+    if (coordenada.creador !== session.user.email) {
       return NextResponse.json({ error: "No autorizado" }, { status: 403 });
     }
 
@@ -55,7 +55,7 @@ export async function PUT(
     const imagen = formData.get("imagen") as File;
 
     // Procesar nueva imagen si se proporciona
-    let imagenUrl = evento.imagen;
+    let imagenUrl = coordenada.imagen;
     if (imagen) {
       const bytes = await imagen.arrayBuffer();
       const buffer = Buffer.from(bytes);
@@ -79,15 +79,15 @@ export async function PUT(
     const geocodeResponse = await fetch(geocodeUrl);
     const geocodeData = await geocodeResponse.json();
 
-    let lat = evento.lat;
-    let lon = evento.lon;
+    let lat = coordenada.lat;
+    let lon = coordenada.lon;
 
     if (geocodeData && geocodeData.length > 0) {
       lat = parseFloat(geocodeData[0].lat);
       lon = parseFloat(geocodeData[0].lon);
     }
 
-    const eventoActualizado = await Evento.findByIdAndUpdate(
+    const coordenadaActualizada = await Coordenada.findByIdAndUpdate(
       id,
       {
         nombre,
@@ -100,11 +100,11 @@ export async function PUT(
       { new: true }
     );
 
-    return NextResponse.json(eventoActualizado);
+    return NextResponse.json(coordenadaActualizada);
   } catch (error) {
-    console.error("Error al actualizar el evento:", error);
+    console.error("Error al actualizar la coordenada:", error);
     return NextResponse.json(
-      { error: "Error al actualizar el evento" },
+      { error: "Error al actualizar la coordenada" },
       { status: 500 }
     );
   }
@@ -123,22 +123,22 @@ export async function DELETE(
     const { id } = await params;
     await connectDB();
 
-    const evento = await Evento.findById(id);
-    if (!evento) {
-      return NextResponse.json({ error: "Evento no encontrado" }, { status: 404 });
+    const coordenada = await Coordenada.findById(id);
+    if (!coordenada) {
+      return NextResponse.json({ error: "Coordenada no encontrada" }, { status: 404 });
     }
 
-    // Verificar que el usuario es el organizador
-    if (evento.organizador !== session.user.email) {
+    // Verificar que el usuario es el creador
+    if (coordenada.creador !== session.user.email) {
       return NextResponse.json({ error: "No autorizado" }, { status: 403 });
     }
 
-    await Evento.findByIdAndDelete(id);
-    return NextResponse.json({ message: "Evento eliminado correctamente" });
+    await Coordenada.findByIdAndDelete(id);
+    return NextResponse.json({ message: "Coordenada eliminada correctamente" });
   } catch (error) {
-    console.error("Error al eliminar el evento:", error);
+    console.error("Error al eliminar la coordenada:", error);
     return NextResponse.json(
-      { error: "Error al eliminar el evento" },
+      { error: "Error al eliminar la coordenada" },
       { status: 500 }
     );
   }

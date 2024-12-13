@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const EventoSchema = new mongoose.Schema(
+const CoordenadaSchema = new mongoose.Schema(
   {
     nombre: {
       type: String,
@@ -8,10 +8,6 @@ const EventoSchema = new mongoose.Schema(
     },
     timestamp: {
       type: Date,
-      required: true,
-    },
-    lugar: {
-      type: String,
       required: true,
     },
     lat: {
@@ -22,7 +18,7 @@ const EventoSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    organizador: {
+    creador: {
       type: String,
       required: true,
     },
@@ -37,7 +33,7 @@ const EventoSchema = new mongoose.Schema(
   }
 );
 
-const Evento =
-  mongoose.models?.Evento || mongoose.model("Evento", EventoSchema);
+const Coordenada =
+  mongoose.models?.Coordenada || mongoose.model("Coordenada", CoordenadaSchema);
 
-export default Evento;
+export default Coordenada;

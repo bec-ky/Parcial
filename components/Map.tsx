@@ -17,17 +17,18 @@ const customIcon = new L.Icon({
   iconAnchor: [12, 41],
 });
 
-interface Event {
+interface Coordenada {
   _id: string;
   nombre: string;
-  lugar: string;
   lat: number;
   lon: number;
+  creador: string;
+  imagen: string;
 }
 
 interface MapProps {
   location: { lat: number; lon: number };
-  eventos: Event[];
+  coordenadas: Coordenada[];
 }
 
 const RecenterAutomatically = ({ location }: { location: { lat: number; lon: number } }) => {
@@ -38,7 +39,7 @@ const RecenterAutomatically = ({ location }: { location: { lat: number; lon: num
   return null;
 };
 
-const EventMap: React.FC<MapProps> = ({ location, eventos }) => {
+const CoordenadaMap: React.FC<MapProps> = ({ location, coordenadas = [] }) => {
   const [zoom, setZoom] = useState(13);
   useEffect(() => {
     if (location.lat && location.lon) {
@@ -54,12 +55,12 @@ const EventMap: React.FC<MapProps> = ({ location, eventos }) => {
       scrollWheelZoom={true}
     >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-      {eventos.map((evento) => (
-        <Marker key={evento._id} position={[evento.lat, evento.lon]} icon={customIcon}>
+      {coordenadas.map((coordenada) => (
+        <Marker key={coordenada._id} position={[coordenada.lat, coordenada.lon]} icon={customIcon}>
           <Popup>
-            <strong>{evento.nombre}</strong>
+            <strong>{coordenada.nombre}</strong>
             <br />
-            {evento.lugar}
+            {coordenada.creador}
           </Popup>
         </Marker>
       ))}
@@ -68,4 +69,4 @@ const EventMap: React.FC<MapProps> = ({ location, eventos }) => {
   );
 };
 
-export default EventMap;
+export default CoordenadaMap;
