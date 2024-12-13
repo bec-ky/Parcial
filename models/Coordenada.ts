@@ -25,6 +25,10 @@ const CoordenadaSchema = new mongoose.Schema(
     imagen: {
       type: String,
     },
+    lugar: {
+      type: String,
+      required: true,
+    },
   },
   {
     versionKey: false,

@@ -15,6 +15,7 @@ interface Coordenada {
   creador: string;
   imagen: string;
   timestamp: string; // Asegúrate de que la propiedad timestamp esté definida
+  lugar: string; // Asegúrate de que la propiedad lugar esté definida
 }
 
 export default function Home() {
