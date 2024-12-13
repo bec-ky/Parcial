@@ -10,7 +10,6 @@ const CoordenadaSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    
     lat: {
       type: Number,
       required: true,
@@ -19,13 +18,12 @@ const CoordenadaSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    creador:{
+    creador: {
       type: String,
       required: true,
     },
     imagen: {
       type: String,
-    
     },
   },
   {
