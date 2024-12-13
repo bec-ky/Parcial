@@ -14,8 +14,8 @@ interface Coordenada {
   lon: number;
   creador: string;
   imagen: string;
-  timestamp: string; // Asegúrate de que la propiedad timestamp esté definida
-  lugar: string; // Asegúrate de que la propiedad lugar esté definida
+  timestamp: string;
+  lugar: string;
 }
 
 export default function Home() {

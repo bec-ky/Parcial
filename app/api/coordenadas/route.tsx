@@ -3,7 +3,6 @@ import Coordenada from "@/models/Coordenada";
 import { connectDB } from "@/lib/mongodb";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import cloudinary from "@/lib/cloudinary";
 
 export async function GET(request: NextRequest) {
   try {
@@ -44,8 +43,7 @@ export async function POST(req: Request) {
     }
 
     await connectDB();
-    const formData = await req.json();
-    const { nombre } = formData;
+    const { nombre } = await req.json();
 
     const geocodeUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(nombre)}&format=json&limit=1`;
     const geocodeResponse = await fetch(geocodeUrl);
@@ -59,6 +57,7 @@ export async function POST(req: Request) {
         lon: parseFloat(lon),
         creador: session.user.email,
         timestamp: new Date(),
+        lugar: nombre,
         imagen: "", // Puedes agregar lógica para manejar imágenes si es necesario
       });
 
